@@ -96,21 +96,8 @@
         <td>{{result.audioFile}}</td>
         <td>{{getText result.result}}</td>
         <td>
-          <table class="table table-striped">
-            <tr>
-              <th>Intents</th>
-              <th>Entities</th>
-            </tr>
-
-            <tr>
-              <td>{{result.intentName}}</td>
-              <td>
-                {{#each entity in result.entities}}
-                  {{entity}} <br>
-                {{/each}}
-              </td>
-            </tr>
-          </table>
+          <b>Intent:</b> {{result.intentName}}<br>
+          <b>Entites:</b> {{result.entities}}
         </td>
       </tr>
     {{/each}}
