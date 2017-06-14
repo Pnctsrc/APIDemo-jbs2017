@@ -1,0 +1,172 @@
+#recognitionBox {
+  top: 50%;
+  left: 50%;
+  padding: 10px;
+  border: none;
+  border-bottom: solid 2px #c9c9c9;
+  transition: border 0.3s;
+  width: 80%;
+}
+
+#recognitionBox: focus {
+   border-bottom: solid 2px #969696;
+}
+
+#resultForm {
+  margin: 20px;
+  margin-top: 40px;
+}
+
+#recordAudioButton, #stopRecordAudioButton, #recordAudioButtonDis{
+  margin-left: 40px;
+}
+
+.resultBox {
+  top: 50%;
+  left: 50%;
+  padding: 10px;
+  border: none;
+  border-bottom: solid 2px #c9c9c9;
+  transition: border 0.3s;
+  width: 100%;
+}
+
+.js-submit-to-api-ai {
+  color: #fff;
+  background-color: #6496c8;
+  text-shadow: -1px 1px #417cb8;
+  border: none;
+  display: inline-block;
+  margin: 10px 10px 0 0;
+  padding: 10px 10px;
+  font-size: 20px;
+  line-height: 1.8;
+  appearance: none;
+  box-shadow: none;
+  border-radius: 5px;
+}
+
+.js-submit-wavs-to-google {
+  margin-right: 40px;
+}
+
+.submit_audio h3 {
+  margin-left: 9px;
+}
+
+.voiceDemoIcon {
+  margin: 20px;
+}
+
+#voiceIconMic, #voiceIconSpeaking {
+  cursor: pointer;
+}
+
+#voiceIconSpeaking {
+    -moz-animation: pulse_animation 1s infinite linear;
+    -o-animation: pulse_animation 1s infinite linear;
+    -webkit-animation: pulse_animation 1s infinite linear;
+    animation: pulse_animation 1s infinite linear;
+}
+
+#voiceIconLoading {
+    -moz-animation: spin 2s infinite linear;
+    -o-animation: spin 2s infinite linear;
+    -webkit-animation: spin 2s infinite linear;
+    animation: spin 2s infinite linear;
+}
+
+@-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(359deg); }
+}
+
+@-moz-keyframes spin {
+    0% { -moz-transform: rotate(0deg); }
+    100% { -moz-transform: rotate(359deg); }
+}
+
+@-o-keyframes spin {
+    0% { -o-transform: rotate(0deg); }
+    100% { -o-transform: rotate(359deg); }
+}
+
+@-ms-keyframes spin {
+    0% { -ms-transform: rotate(0deg); }
+    100% { -ms-transform: rotate(359deg); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(359deg); }
+}
+
+@-webkit-keyframes pulse_animation {
+  0% { transform: scale(1); }
+  10% { transform: scale(1.01); }
+  20% { transform: scale(1.02); }
+  30% { transform: scale(1.03); }
+  40% { transform: scale(1.04); }
+  50% { transform: scale(1.05); }
+  60% { transform: scale(1.04); }
+  70% { transform: scale(1.03); }
+  80% { transform: scale(1.02); }
+  90% { transform: scale(1.01); }
+  100% { transform: scale(1); }
+}
+
+@-moz-keyframes pulse_animation {
+  0% { transform: scale(1); }
+  10% { transform: scale(1.01); }
+  20% { transform: scale(1.02); }
+  30% { transform: scale(1.03); }
+  40% { transform: scale(1.04); }
+  50% { transform: scale(1.05); }
+  60% { transform: scale(1.04); }
+  70% { transform: scale(1.03); }
+  80% { transform: scale(1.02); }
+  90% { transform: scale(1.01); }
+  100% { transform: scale(1); }
+}
+
+@-o-keyframes pulse_animation {
+  0% { transform: scale(1); }
+  10% { transform: scale(1.01); }
+  20% { transform: scale(1.02); }
+  30% { transform: scale(1.03); }
+  40% { transform: scale(1.04); }
+  50% { transform: scale(1.05); }
+  60% { transform: scale(1.04); }
+  70% { transform: scale(1.03); }
+  80% { transform: scale(1.02); }
+  90% { transform: scale(1.01); }
+  100% { transform: scale(1); }
+}
+
+@-ms-keyframes pulse_animation {
+  0% { transform: scale(1); }
+  10% { transform: scale(1.01); }
+  20% { transform: scale(1.02); }
+  30% { transform: scale(1.03); }
+  40% { transform: scale(1.04); }
+  50% { transform: scale(1.05); }
+  60% { transform: scale(1.04); }
+  70% { transform: scale(1.03); }
+  80% { transform: scale(1.02); }
+  90% { transform: scale(1.01); }
+  100% { transform: scale(1); }
+}
+
+@keyframes pulse_animation {
+  0% { transform: scale(1); }
+  10% { transform: scale(1.01); }
+  20% { transform: scale(1.02); }
+  30% { transform: scale(1.03); }
+  40% { transform: scale(1.04); }
+  50% { transform: scale(1.05); }
+  60% { transform: scale(1.04); }
+  70% { transform: scale(1.03); }
+  80% { transform: scale(1.02); }
+  90% { transform: scale(1.01); }
+  100% { transform: scale(1); }
+}
