@@ -11,6 +11,7 @@ Template.voiceDemo.onCreated(function(){
   //set the status of API.ai request
   this.voiceDict.set("api_status", "inactive");
   this.voiceDict.set("API_recording", false);
+  this.voiceDict.set("hasResult", false);
 
   //set the status of WAV files request
   this.voiceDict.set("WAV_files_status", "inactive");
@@ -57,6 +58,11 @@ Template.voiceDemo.helpers({
     return RecognitionResults.findOne({status: {$exists: true}}).status === "done";
   },
 
+  hasResult: function(){
+    const voiceDict = Template.instance().voiceDict
+    return voiceDict.get("hasResult");
+  },
+
   showWAVResults: function(){
     //reset the status
     const statusObjID = RecognitionResults.findOne({status: {$exists: true}})._id;
@@ -75,6 +81,14 @@ Template.voiceDemo.helpers({
   getText: function(result){
     return result[0];
   },
+
+  getResultEntities: function(){
+    return Template.instance().voiceDict.get("entitiesResult");
+  },
+
+  getIntentName: function(){
+    return Template.instance().voiceDict.get("intentResult");
+  },
 })
 
 Template.voiceDemo.events({
@@ -86,6 +100,7 @@ Template.voiceDemo.events({
     //set the status to be speaking
     voiceDict.set("recording_status", "speaking");
     voiceDict.set("API_recording", true);
+    voiceDict.set("hasResult", false);
 
     // request permission to access audio stream
     navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
@@ -232,20 +247,24 @@ Template.voiceDemo.events({
 
           if(!!result.data.result.parameters){
             const parameters = result.data.result.parameters;
+            const entities = [];
 
-            if(parameters.How !== ""){
-              $("#resultHow").val(parameters.How);
-            };
+            //save results to ReactiveDict
+            for(entity in parameters){
+              if(parameters[entity]){
+                entities.push({
+                  name: entity,
+                  value: parameters[entity]
+                })
+              }
+            }
 
-            if(parameters.TypeofCoffee !== ""){
-              $("#resultType").val(parameters.TypeofCoffee);
-            };
-
-            if(parameters.Size !== ""){
-              $("#resultSize").val(parameters.Size);
-            };
+            voiceDict.set("entitiesResult", entities);
+            voiceDict.set("intentResult", result.data.result.metadata.intentName);
           }
+
           voiceDict.set("api_status", "inactive");
+          voiceDict.set("hasResult", true);
         });
       } else {
         window.alert("Plase type/say something first");

@@ -41,26 +41,25 @@
 
     <div class="col-md-8">
       <form class="form-horizontal" id="resultForm">
-        <div class="form-group">
-          <label for="resultSize" class="col-sm-2 control-label">Size</label>
-          <div class="col-sm-10">
-            <input type="email" class="resultBox js-result-size" id="resultSize" readonly="readonly">
+        {{#if hasResult}}
+          <div class="form-group">
+            <label for="resultSize" class="col-sm-2 control-label">Intent</label>
+            <div class="col-sm-10">
+              <input type="text" class="resultBox" readonly="readonly" value="{{getIntentName}}">
+            </div>
           </div>
-        </div>
 
-        <div class="form-group">
-          <label for="resultHow" class="col-sm-2 control-label">How</label>
-          <div class="col-sm-10">
-            <input type="email" class="resultBox js-result-how" id="resultHow" readonly="readonly">
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="resultType" class="col-sm-2 control-label">Type</label>
-          <div class="col-sm-10">
-            <input type="email" class="resultBox js-result-type" id="resultType" readonly="readonly">
-          </div>
-        </div>
+          {{#each entity in getResultEntities}}
+            <div class="form-group">
+              <label for="resultSize" class="col-sm-2 control-label">{{entity.name}}</label>
+              <div class="col-sm-10">
+                <input type="text" class="resultBox" readonly="readonly" value="{{entity.value}}">
+              </div>
+            </div>
+          {{/each}}
+        {{else}}
+          <p align="center">Result will shows up here</p>
+        {{/if}}
       </form>
     </div>
   </div>
@@ -85,21 +84,26 @@
 
   <hr>
 
-  <table class="table table-striped">
-    <tr>
-      <th>FilePath</th>
-      <th>Result</th>
-      <th>API.ai</th>
-    </tr>
-    {{#each result in WAVAPIResults}}
+  <table class="table table-stripped">
+    <thead>
       <tr>
-        <td>{{result.audioFile}}</td>
-        <td>{{getText result.result}}</td>
-        <td>
-          <b>Intent:</b> {{result.intentName}}<br>
-          <b>Entites:</b> {{result.entities}}
-        </td>
+        <th>FilePath</th>
+        <th>Result</th>
+        <th>API.ai</th>
       </tr>
-    {{/each}}
+    </thead>
+
+    <tbody>
+      {{#each result in WAVAPIResults}}
+        <tr>
+          <td>{{result.audioFile}}</td>
+          <td>{{getText result.result}}</td>
+          <td>
+            <b>Intent:</b> {{result.intentName}}<br>
+            <b>Entites:</b> {{result.entities}}
+          </td>
+        </tr>
+      {{/each}}
+    </tbody>
   </table>
 </template>
