@@ -109,6 +109,7 @@ Template.voiceDemo.events({
           recorderType: StereoAudioRecorder,
           mimeType: 'audio/wave',
           numberOfAudioChannels: 1,
+          desiredSampRate: 16000,
       };
 
       var recorder = RecordRTC(stream, options);
@@ -137,6 +138,7 @@ Template.voiceDemo.events({
           recorderType: StereoAudioRecorder,
           mimeType: 'audio/wave',
           numberOfAudioChannels: 1,
+          desiredSampRate: 16000,
       };
 
       var recorder = RecordRTC(stream, options);
