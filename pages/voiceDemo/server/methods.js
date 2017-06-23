@@ -1,3 +1,8 @@
+const recording_settings = {
+  input_path: "../../../../../pages/voiceDemo/audio/input/input.wav",
+  wav_files: "../../../../../pages/voiceDemo/audio/wav_files/"
+}
+
 Meteor.methods({
 
     "send_audio_for_recognition": function(audioFile){
@@ -7,7 +12,7 @@ Meteor.methods({
         //write the audio file to local
         const fs = Npm.require("fs");
         var buf = new Buffer(audioFile, 'base64'); // decode
-        fs.writeFileSync(Meteor.settings.voice_audio_path, buf)
+        fs.writeFileSync(recording_settings.input_path, buf)
 
         // Instantiates a client
         const speechClient = Speech({
@@ -15,7 +20,7 @@ Meteor.methods({
         });
 
         // The name of the audio file to transcribe
-        const filename = Meteor.settings.voice_audio_path;
+        const filename = recording_settings.input_path;
 
         // The audio file's encoding, sample rate in hertz, and BCP-47 language code
         const options = {
@@ -27,10 +32,17 @@ Meteor.methods({
         // Detects speech in the audio file
         return speech.recognize(filename, options)
           .then((results) => {
+            //delete the saved audio file
+            fs.unlinkSync(filename);
+
             return results;
           })
           .catch((err) => {
             console.error('ERROR:', err);
+
+            //delete the saved audio file
+            fs.unlinkSync(filename);
+
             return err;
           })
     },
@@ -40,9 +52,9 @@ Meteor.methods({
       const fs = Npm.require("fs");
       var buf = new Buffer(audioFile, 'base64'); // decode
       const fileName = "Input-" + (new Date()).getTime() + ".wav";
-      fs.writeFileSync(Meteor.settings.voice_input_path + fileName, buf);
+      fs.writeFileSync(recording_settings.wav_files + fileName, buf);
 
-      return Meteor.settings.voice_input_path + fileName;
+      return recording_settings.wav_files + fileName;
     },
 
     "send_text_for_APIAI_processing": function(text){
@@ -63,7 +75,7 @@ Meteor.methods({
 
     "sned_wav_files_to_Google_Speech_API": function(){
         const fs = Npm.require("fs");
-        const dirname = Meteor.settings.voice_input_path;
+        const dirname = recording_settings.wav_files;
         RecognitionResults.remove({status: {$exists: false}});
 
         //save all path's of WAV files to an array
