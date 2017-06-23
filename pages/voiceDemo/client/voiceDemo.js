@@ -21,6 +21,20 @@ Template.voiceDemo.onCreated(function(){
   $.getScript("https://webrtcexperiment-webrtc.netdna-ssl.com/RecordRTC.js");
   $.getScript("https://webrtcexperiment-webrtc.netdna-ssl.com/gif-recorder.js");
   $.getScript("https://webrtcexperiment-webrtc.netdna-ssl.com/getScreenId.js");
+
+  //when the page is refreshed or closed
+  window.onunload = function(){
+    //delete all files of this user
+
+  }
+
+  //create an id for the page
+  const page_id = Random.id(25);
+  this.voiceDict.set("page_id", page_id);
+  RecognitionResults.insert({
+    status: "inactive",
+    page_id: page_id
+  })
 })
 
 Template.voiceDemo.helpers({
@@ -55,7 +69,8 @@ Template.voiceDemo.helpers({
   },
 
   ifWAVProcessingDone: function() {
-    return RecognitionResults.findOne({status: {$exists: true}}).status === "done";
+    const page_id = Template.instance().voiceDict.get("page_id");
+    return RecognitionResults.findOne({status: {$exists: true}, page_id: page_id}).status === "done";
   },
 
   hasResult: function(){
@@ -65,17 +80,20 @@ Template.voiceDemo.helpers({
 
   showWAVResults: function(){
     //reset the status
-    const statusObjID = RecognitionResults.findOne({status: {$exists: true}})._id;
+    const page_id = Template.instance().voiceDict.get("page_id");
+    const statusObjID = RecognitionResults.findOne({status: {$exists: true}, page_id: page_id})._id;
+    RecognitionResults.update(statusObjID, {$set: {
+      status: "inactive",
+    }});
+
 
     Template.instance().voiceDict.set("WAV_files_status", "inactive");
-    RecognitionResults.update(statusObjID, {
-      status: "inactive"
-    });
     $("#submitWAV").button("reset");
   },
 
   WAVAPIResults: function(){
-    return RecognitionResults.find({status: {$exists: false}});
+    const page_id = Template.instance().voiceDict.get("page_id");
+    return RecognitionResults.find({status: {$exists: false}, page_id: page_id});
   },
 
   getText: function(result){
@@ -176,7 +194,7 @@ Template.voiceDemo.events({
 
       //send the data to the sever and save it to the local disk
       blobToBase64(blob, function(base64){ // encode
-        Meteor.call("save_wav_files", base64, function(err, result){
+        Meteor.call("save_wav_files", base64, voiceDict.get("page_id"), function(err, result){
           if(err){
             window.alert(err);
           }
@@ -213,7 +231,7 @@ Template.voiceDemo.events({
 
       //send the data to the sever and save it to the local disk
       blobToBase64(blob, function(base64){ // encode
-        Meteor.call("send_audio_for_recognition", base64, function(err, result){
+        Meteor.call("send_audio_for_recognition", base64, voiceDict.get("page_id"), function(err, result){
           if(err){
             window.alert(err);
           } else {
@@ -275,17 +293,19 @@ Template.voiceDemo.events({
 
   "click #submitWAV": function(){
     $("#submitWAV").button("loading");
-    const voiceDict = Template.instance().voiceDict
-    Meteor.call("sned_wav_files_to_Google_Speech_API", function(err){
+    const voiceDict = Template.instance().voiceDict;
+    const page_id = voiceDict.get("page_id");
+
+    Meteor.call("sned_wav_files_to_Google_Speech_API", page_id, function(err, result){
       if(err){
         window.alert(err);
         //reset the status
-        const statusObjID = RecognitionResults.findOne({status: {$exists: true}})._id;
+        const statusObjID = RecognitionResults.findOne({status: {$exists: true}, page_id: page_id})._id;
 
         voiceDict.set("WAV_files_status", "inactive");
-        RecognitionResults.update(statusObjID, {
+        RecognitionResults.update(statusObjID, {$set: {
           status: "inactive"
-        });
+        }});
         $("#submitWAV").button("reset");
       }
     });

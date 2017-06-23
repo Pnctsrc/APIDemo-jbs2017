@@ -1,18 +1,23 @@
 const recording_settings = {
-  input_path: "../../../../../pages/voiceDemo/audio/input/input.wav",
+  input_path: "../../../../../pages/voiceDemo/audio/input/",
   wav_files: "../../../../../pages/voiceDemo/audio/wav_files/"
 }
 
 Meteor.methods({
 
-    "send_audio_for_recognition": function(audioFile){
+    "send_audio_for_recognition": function(audioFile, page_id){
         const Speech = Npm.require('@google-cloud/speech');
         const speech = Speech();
 
         //write the audio file to local
         const fs = Npm.require("fs");
         var buf = new Buffer(audioFile, 'base64'); // decode
-        fs.writeFileSync(recording_settings.input_path, buf)
+        const path_for_id = recording_settings.input_path + page_id + "/";
+
+        if(!fs.existsSync(path_for_id)){
+          fs.mkdirSync(path_for_id);
+        }
+        fs.writeFileSync(path_for_id + "input.wav", buf);
 
         // Instantiates a client
         const speechClient = Speech({
@@ -20,7 +25,7 @@ Meteor.methods({
         });
 
         // The name of the audio file to transcribe
-        const filename = recording_settings.input_path;
+        const filename = path_for_id + "input.wav";
 
         // The audio file's encoding, sample rate in hertz, and BCP-47 language code
         const options = {
@@ -47,12 +52,17 @@ Meteor.methods({
           })
     },
 
-    "save_wav_files": function(audioFile){
+    "save_wav_files": function(audioFile, page_id){
       //write the audio file to local
       const fs = Npm.require("fs");
       var buf = new Buffer(audioFile, 'base64'); // decode
       const fileName = "Input-" + (new Date()).getTime() + ".wav";
-      fs.writeFileSync(recording_settings.wav_files + fileName, buf);
+      const path_for_id = recording_settings.wav_files + page_id + "/";
+
+      if(!fs.existsSync(path_for_id)){
+        fs.mkdirSync(path_for_id);
+      }
+      fs.writeFileSync(path_for_id + fileName, buf);
 
       return recording_settings.wav_files + fileName;
     },
@@ -73,10 +83,15 @@ Meteor.methods({
         })
     },
 
-    "sned_wav_files_to_Google_Speech_API": function(){
+    "sned_wav_files_to_Google_Speech_API": function(page_id){
         const fs = Npm.require("fs");
-        const dirname = recording_settings.wav_files;
-        RecognitionResults.remove({status: {$exists: false}});
+        const dirname = recording_settings.wav_files + page_id + "/";
+        RecognitionResults.remove({status: {$exists: false}, page_id: page_id});
+
+        //check if the folder exists
+        if(!fs.existsSync(dirname)){
+          throw new Meteor.Error(301, "No WAV file found");
+        }
 
         //save all path's of WAV files to an array
         var wavPaths = [];
@@ -111,20 +126,23 @@ Meteor.methods({
                 //when all the files have been processed
                 const object_id = RecognitionResults.insert({
                   audioFile: filePathVar,
-                  result: result
+                  result: result,
+                  page_id: page_id
                 })
 
                 if(count == wavPaths.length){
-                  if(!RecognitionResults.findOne({status: {$exists: true}})){
+                  if(!RecognitionResults.findOne({status: {$exists: true}, page_id: page_id})){
                     RecognitionResults.insert({
-                      status: "done"
+                      status: "done",
+                      page_id: page_id
                     })
                   } else {
                     RecognitionResults.update({
-                      status: {$exists: true}
-                    }, {
+                      status: {$exists: true},
+                      page_id: page_id
+                    }, {$set: {
                       status: "done"
-                    });
+                    }});
                   }
                 }
 
